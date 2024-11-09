@@ -1,5 +1,6 @@
 import { Drive } from "../models/drive.model.js";
 import { User } from "../models/user.model.js";
+import mongoose from "mongoose";
 const getDrives = async (req, res) => {
     try {
         const drives = await Drive.find({});
@@ -66,18 +67,21 @@ const addDrive = async (req, res) => {
 };
 
 const applyToDrive = async (req, res) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+    
     try {
         const { driveId } = req.params;
         const userId = req.user._id;
 
         // Find the drive and check if it exists
-        const drive = await Drive.findById(driveId);
+        const drive = await Drive.findById(driveId).session(session);
         if (!drive) {
             return res.status(404).json({ message: 'Drive not found' });
         }
 
-        // Check if the user meets the eligibility criteria
-        const user = await User.findById(userId);
+        // Find the user and check if they exist
+        const user = await User.findById(userId).session(session);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
@@ -94,48 +98,62 @@ const applyToDrive = async (req, res) => {
         const alreadyApplied = drive.appliedUsers.some(
             (application) => application.userId.toString() === userId.toString()
         );
-
         if (alreadyApplied) {
             return res.status(400).json({ message: 'You have already applied to this drive.' });
         }
 
-        // Check if user’s branch is eligible
+        // Check eligibility based on branch, CGPA, and gender
         if (!drive.eligibleBranches.includes(user.branch)) {
             return res.status(403).json({ message: 'Your branch is not eligible for this drive.' });
         }
-
-        // Check if user meets the minimum CGPA requirement
         if (user.currentCGPA < drive.minCGPA) {
             return res.status(403).json({ message: `You do not meet the minimum CGPA requirement of ${drive.minCGPA}.` });
         }
-
-        // Check if the drive has a specific gender requirement
         if (drive.gender !== 'All' && drive.gender !== user.gender) {
             return res.status(403).json({ message: `This drive is only open to ${drive.gender} candidates.` });
         }
 
-        // If all checks pass, proceed to apply for the drive
+        // Add user information to appliedUsers array
         drive.appliedUsers.push({
-            userId,
+            userId: user._id,
+            name: user.name,
+            role: user.role,
+            email: user.email,
+            rollNo: user.rollNo,
+            resume: user.resume || null,  // Use a default or null if missing
+            currentCGPA: user.currentCGPA,
+            gender: user.gender,
+            personalEmail: user.personalEmail || null,
+            phoneNumber: user.phoneNumber || null,
+            tenthPercentage: user.tenthPercentage || 0,  // Ensure non-empty value
+            twelfthPercentage: user.twelfthPercentage || 0,
             applicationDate: new Date(),
-            status: 'Applied',
+            status: 'Applied'
         });
-        await drive.save();
+        console.log(drive.appliedUsers);
+        
+        await drive.save({ session });
 
-        // Update the User document to include this drive in appliedDrives
+        // Update user's appliedDrives array
         user.appliedDrives.push({
             driveId,
             appliedAt: new Date(),
         });
-        await user.save();
+        await user.save({ session });
+
+        await session.commitTransaction();
+        session.endSession();
 
         res.status(200).json({ message: 'Successfully applied to the drive.' });
-    } 
-    catch (error) {
+    } catch (error) {
+        await session.abortTransaction();
+        session.endSession();
+        
         console.error('Error applying to drive:', error);
         res.status(500).json({ message: 'An error occurred while applying to the drive.', error });
     }
 };
+
 
 
 export {addDrive,getDrives,applyToDrive};
