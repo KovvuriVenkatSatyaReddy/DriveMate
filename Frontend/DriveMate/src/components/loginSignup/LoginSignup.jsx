@@ -160,7 +160,6 @@ const LoginSignup = () => {
             }
           } catch (refreshError) {
             console.error('Auto-login failed:', refreshError);
-            // setError("An unexpected error occurred during auto-login.");
           }
         }
       }

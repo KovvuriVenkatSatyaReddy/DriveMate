@@ -203,54 +203,57 @@ const DriveDetails = () => {
             {/* Scrollable container for applicant details in a table format */}
             <div className="overflow-y-scroll max-h-64 w-full border border-gray-300 rounded-lg p-4">
               {drive.appliedUsers.length > 0 ? (
-                <table className="min-w-full bg-white">
-                  <thead>
-                    <tr>
-                      <th className="px-4 py-2 text-left text-sm font-semibold text-gray-800 border-b">User ID</th>
-                      <th className="px-4 py-2 text-left text-sm font-semibold text-gray-800 border-b">Name</th>
-                      <th className="px-4 py-2 text-left text-sm font-semibold text-gray-800 border-b">Role</th>
-                      <th className="px-4 py-2 text-left text-sm font-semibold text-gray-800 border-b">Email</th>
-                      <th className="px-4 py-2 text-left text-sm font-semibold text-gray-800 border-b">Roll No</th>
-                      <th className="px-4 py-2 text-left text-sm font-semibold text-gray-800 border-b">CGPA</th>
-                      <th className="px-4 py-2 text-left text-sm font-semibold text-gray-800 border-b">Gender</th>
-                      <th className="px-4 py-2 text-left text-sm font-semibold text-gray-800 border-b">Personal Email</th>
-                      <th className="px-4 py-2 text-left text-sm font-semibold text-gray-800 border-b">Phone Number</th>
-                      <th className="px-4 py-2 text-left text-sm font-semibold text-gray-800 border-b">Tenth Percentage</th>
-                      <th className="px-4 py-2 text-left text-sm font-semibold text-gray-800 border-b">Twelfth Percentage</th>
-                      <th className="px-4 py-2 text-left text-sm font-semibold text-gray-800 border-b">Status</th>
-                      <th className="px-4 py-2 text-left text-sm font-semibold text-gray-800 border-b">Application Date</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {drive.appliedUsers.map((applicant, index) => (
-                      <tr key={index} className="bg-white even:bg-gray-100">
-                        <td className="px-4 py-2 text-gray-700 border-b">{applicant.userId}</td>
-                        <td className="px-4 py-2 text-gray-700 border-b">{applicant.name}</td>
-                        <td className="px-4 py-2 text-gray-700 border-b">{applicant.role}</td>
-                        <td className="px-4 py-2 text-gray-700 border-b">{applicant.email}</td>
-                        <td className="px-4 py-2 text-gray-700 border-b">{applicant.rollNo}</td>
-                        <td className="px-4 py-2 text-gray-700 border-b">{applicant.resume}</td>
-                        <td className="px-4 py-2 text-gray-700 border-b">{applicant.currentCGPA}</td>
-                        <td className="px-4 py-2 text-gray-700 border-b">{applicant.gender}</td>
-                        <td className="px-4 py-2 text-gray-700 border-b">{applicant.personalEmail}</td>
-                        <td className="px-4 py-2 text-gray-700 border-b">{applicant.phoneNumber}</td>
-                        <td className="px-4 py-2 text-gray-700 border-b">{applicant.tenthPercentage}</td>
-                        <td className="px-4 py-2 text-gray-700 border-b">{applicant.twelfthPercentage}</td>
-                        <td className="px-4 py-2 text-gray-700 border-b">{applicant.status}</td>
-                        <td className="px-4 py-2 text-gray-700 border-b">{new Date(applicant.applicationDate).toLocaleDateString()}</td>
-                        {/* Add more fields as needed */}
+                <div className="overflow-x-auto">
+                  <table className="min-w-full bg-white border border-gray-200">
+                    <thead>
+                      <tr className="bg-gray-100">
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 border-b">Name</th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 border-b">Role</th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 border-b">Email</th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 border-b">Roll No</th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 border-b">Resume</th>
+                        <th className="px-6 py-3 text-center text-xs font-semibold text-gray-700 border-b">CGPA</th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 border-b">Gender</th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 border-b">Personal Email</th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 border-b">Phone Number</th>
+                        <th className="px-6 py-3 text-center text-xs font-semibold text-gray-700 border-b">10th %</th>
+                        <th className="px-6 py-3 text-center text-xs font-semibold text-gray-700 border-b">12th %</th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 border-b">Status</th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 border-b">Application Date</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {drive.appliedUsers.map((applicant, index) => (
+                        <tr key={index} className="even:bg-gray-50">
+                          <td className="px-6 py-4 text-gray-700 border-b whitespace-nowrap">{applicant.name}</td>
+                          <td className="px-6 py-4 text-gray-700 border-b whitespace-nowrap">{applicant.role}</td>
+                          <td className="px-6 py-4 text-gray-700 border-b whitespace-nowrap">{applicant.email}</td>
+                          <td className="px-6 py-4 text-gray-700 border-b whitespace-nowrap">{applicant.rollNo}</td>
+                          <td className="px-6 py-4 text-blue-500 border-b whitespace-nowrap">
+                            <a href={applicant.resume} target="_blank" rel="noopener noreferrer">View Resume</a>
+                          </td>
+                          <td className="px-6 py-4 text-center text-gray-700 border-b">{applicant.currentCGPA}</td>
+                          <td className="px-6 py-4 text-gray-700 border-b whitespace-nowrap">{applicant.gender}</td>
+                          <td className="px-6 py-4 text-gray-700 border-b whitespace-nowrap">{applicant.personalEmail}</td>
+                          <td className="px-6 py-4 text-gray-700 border-b whitespace-nowrap">{applicant.phoneNumber}</td>
+                          <td className="px-6 py-4 text-center text-gray-700 border-b">{applicant.tenthPercentage}</td>
+                          <td className="px-6 py-4 text-center text-gray-700 border-b">{applicant.twelfthPercentage}</td>
+                          <td className="px-6 py-4 text-gray-700 border-b whitespace-nowrap">{applicant.status}</td>
+                          <td className="px-6 py-4 text-gray-700 border-b whitespace-nowrap">{new Date(applicant.applicationDate).toLocaleDateString()}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               ) : (
                 <p className="text-gray-600">No applicants yet.</p>
               )}
+
             </div>
           </div>
         )
         }
-      </div > 
+      </div >
 
       {/* Conditional "Apply Now" button for Student with Applied Status Check */}
       {

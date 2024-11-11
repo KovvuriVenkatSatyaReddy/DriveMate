@@ -36,7 +36,7 @@ const addDrive = async (req, res) => {
         createdBy,
         updates
     } = req.body.drive;
-    console.log(req.body.drive);
+    // console.log(req.body.drive);
     
 
     try {
@@ -101,7 +101,30 @@ const applyToDrive = async (req, res) => {
         if (alreadyApplied) {
             return res.status(400).json({ message: 'You have already applied to this drive.' });
         }
-
+        
+        const requiredFields = [
+            'branch',
+            'personalEmail',
+            'currentCGPA',
+            'name',
+            'rollNo',
+            // 'resume',
+            'gender',
+            'phoneNumber',
+            'tenthPercentage',
+            'twelfthPercentage'
+        ];
+        
+        // Check if any required field is missing or empty
+        const missingFields = requiredFields.filter(field => !user[field]);
+        
+        if (missingFields.length > 0) {
+            return res.status(403).json({ 
+                message: 'Set all user details to be eligible for this drive.', 
+                missingFields 
+            });
+        }
+        
         // Check eligibility based on branch, CGPA, and gender
         if (!drive.eligibleBranches.includes(user.branch)) {
             return res.status(403).json({ message: 'Your branch is not eligible for this drive.' });
@@ -114,7 +137,7 @@ const applyToDrive = async (req, res) => {
         }
 
         // Add user information to appliedUsers array
-        drive.appliedUsers.push({
+        const details = {
             userId: user._id,
             name: user.name,
             role: user.role,
@@ -129,11 +152,15 @@ const applyToDrive = async (req, res) => {
             twelfthPercentage: user.twelfthPercentage || 0,
             applicationDate: new Date(),
             status: 'Applied'
-        });
-        console.log(drive.appliedUsers);
+        };
+
+        drive.appliedUsers.push(details);
+
+        console.log(`Applied users are: ${drive.appliedUsers}`);
+        console.log(details);
         
         await drive.save({ session });
-
+            
         // Update user's appliedDrives array
         user.appliedDrives.push({
             driveId,

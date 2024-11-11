@@ -66,6 +66,50 @@ const DriveSchema = new Schema(
           ref: "User",
           required: true,
         },
+        name: {
+          type: String,
+          required: true,
+        },
+        role: {
+          type: String,
+          required: true,
+        },
+        email: {
+          type: String,
+          required: true,
+        },
+        rollNo: {
+          type: String,
+          required: true,
+        },
+        resume: {
+          type: String,
+          default: null,  // Optional if resume is missing
+        },
+        currentCGPA: {
+          type: Number,
+          required: true,
+        },
+        gender: {
+          type: String,
+          required: true,
+        },
+        personalEmail: {
+          type: String,
+          default: null,
+        },
+        phoneNumber: {
+          type: String,
+          default: null,
+        },
+        tenthPercentage: {
+          type: Number,
+          default: 0, // Default to 0 to ensure a non-empty value
+        },
+        twelfthPercentage: {
+          type: Number,
+          default: 0,
+        },
         applicationDate: {
           type: Date,
           default: Date.now,
@@ -77,6 +121,7 @@ const DriveSchema = new Schema(
         },
       },
     ],
+    
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User", // Assuming an Admin/User model exists

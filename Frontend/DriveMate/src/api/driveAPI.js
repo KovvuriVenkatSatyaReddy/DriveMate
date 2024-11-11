@@ -15,7 +15,7 @@ const addDrive = async (drive,dispatch) => {
 const fetchAllDrives = async (dispatch) => {
     try {
         const response = await axios.get('http://localhost:8000/api/v1/drives/drives',);
-        // console.log(response);
+        // console.log(resp....onse);
         dispatch(initialiseDrives(response.data));
         return response.data;
     } catch (error) {
@@ -30,8 +30,8 @@ const applyToDrive = async (dispatch, driveId) => {
         const response = await axios.post(`http://localhost:8000/api/v1/drives/${driveId}/apply`, {}, {
             withCredentials: true,
         });
-        // console.log(response);
-        dispatch(updateAppliedDrives(response.data)); // Dispatch an action to update applied drives if needed
+        console.log(response);
+        // dispatch(updateAppliedDrives(response.data)); // Dispatch an action to update applied drives if needed
         return response.data;
     } catch (error) {
         console.error("There was an error applying to the drive", error);

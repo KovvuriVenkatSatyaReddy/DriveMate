@@ -23,7 +23,7 @@ const generateAccessAndRefreshTokens = async (userId) => {
 const registerUser = async (req, res) => {
   // Get user details from frontend
   const { name, email, password, rollNo } = req.body;
-  console.log(name,email,password,rollNo);
+  // console.log(name,email,password,rollNo);
   
   // Check for empty fields
   if ([name, email, password, rollNo].some((field) => field.toString().trim() === "")) {
@@ -48,13 +48,13 @@ const registerUser = async (req, res) => {
 
     // Fetch the created user without sensitive fields
     const createdUser = await User.findById(newUser._id).select("-password -refreshToken");
-    console.log(`Creating user: ${createdUser}`);
+    // console.log(`Creating user: ${createdUser}`);
 
     if (!createdUser) {
       return res.status(500).json({ message: "Something went wrong while registering the user" });
     }
 
-    console.log(`User created successfully: ${createdUser}`);
+    // console.log(`User created successfully: ${createdUser}`);
     return res.status(201).json({ message: "User registered successfully", user: createdUser });
   } catch (error) {
     // Return error response
@@ -265,7 +265,7 @@ const getUserInfo = async (req, res) => {
 const getUserDetails = async (req, res) => {
   try {
       const currentUserRole = req.user?.role;
-      console.log(currentUserRole);
+      // console.log(currentUserRole);
       
       // Check if the current user has "admin" or "coordinator" role
       if (currentUserRole !== "admin" && currentUserRole !== "coordinator") {
@@ -356,7 +356,7 @@ const updateUserProfile = async (req, res) => {
 
 const promoteUser = async (req, res) => {
   const userId = req.body._id; // Ensure user is authenticated and has an ID
-  console.log(userId);
+  // console.log(userId);
 
   try {
     const updatedUser = await User.findByIdAndUpdate(
