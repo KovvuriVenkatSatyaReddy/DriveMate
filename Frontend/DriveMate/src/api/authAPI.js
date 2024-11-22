@@ -72,7 +72,6 @@ const register = async (name,email,password,rollNo,dispatch) => {
       password,
       rollNo,
     });
-    // Dispatch login action after registering
     dispatch(
       authLogin({
         user: response.data.user,
@@ -85,44 +84,74 @@ const register = async (name,email,password,rollNo,dispatch) => {
   }
 };
 
-const updateUser = async (user,newUserData,accessToken,dispatch) => {
-  console.log(newUserData);
-  
-  const newUser = {
-    _id: user._id,
-    name: newUserData.name,
-    email: user.email,
-    personalEmail: newUserData.personalEmail,
-    phoneNumber: newUserData.phoneNumber,
-    degree: newUserData.degree,
-    branch: newUserData.branch,
-    gender: newUserData.gender,
-    tenthPercentage: newUserData.tenthPercentage,
-    twelfthPercentage: newUserData.twelfthPercentage,
-    currentCGPA: newUserData.currentCGPA,
-    resumeLink: newUserData.resumeLink,
-  };
-
+const updateUser = async (user, file, newUserData, accessToken, dispatch) => {
   try {
-    const response = await axios.post("http://localhost:8000/api/v1/users/update", newUser, {
-      withCredentials: true,
-      headers: {
-        Authorization: `Bearer ${accessToken}`
-      }
-    });
+    // console.log(file);
+    let resumeLink = user.resumeLink;
 
-    console.log(response);
+    // Handle file upload if a new file is provided
+    if (file) {
+      const formData = new FormData();
+      formData.append("resume", file);
+      console.log(file);
+      
+      for (const pair of formData.entries()) {
+        console.log(pair[0], pair[1]);
+      }
+      
+      const uploadResponse = await axios.post(
+        "http://localhost:8000/api/v1/users/upload-resume",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+
+      if (uploadResponse.data.success) {
+        resumeLink = uploadResponse.data.url; // Get the uploaded file's URL
+      } else {
+        throw new Error("Failed to upload resume. Please try again.");
+      }
+    }
+
+    // Prepare updated user data
+    const updatedUserData = { ...newUserData, resumeLink };
+
+    // Update user profile
+    console.log(updatedUserData);
+    
+    const updateResponse = await axios.post(
+      "http://localhost:8000/api/v1/users/update",
+      updatedUserData,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    // Dispatch updated user data to Redux store
     dispatch(
       authUpdateUser({
-        user : response.data.user,
+        user: updateResponse,
       })
     );
-    return response.data;
+
+    // Return the updated user data
+    return updateResponse.data;
   } catch (error) {
     console.error("Update user error:", error);
-    throw new Error(error || "Failed to update user");
+
+    // Throw detailed error message if available
+    throw new Error(
+      error.response?.data?.message || "Failed to update user. Please try again."
+    );
   }
 };
+
 
 const promoteToCoordinator = async (userId,accessToken, dispatch) => {
   try {

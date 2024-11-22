@@ -85,6 +85,9 @@ const userSchema = new Schema(
         uploadedAt: { type: Date, default: Date.now }, // Upload date
       },
     ],
+    resumeLink:{
+      type: String,
+    },
     address: {
       type: String,
     },

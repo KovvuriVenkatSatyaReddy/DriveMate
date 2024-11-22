@@ -317,7 +317,7 @@ const updateUserProfile = async (req, res) => {
     tenthPercentage,
     twelfthPercentage,
     currentCGPA,
-    resumeLink,
+    resumeLink = req.body.resumeLink,
     placedIn,
   } = req.body;
 
@@ -349,6 +349,60 @@ const updateUserProfile = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       message: "Error updating profile",
+      error: error.message,
+    });
+  }
+};
+
+const uploadResume = async (req, res) => {
+  try {
+    // Validate the resume URL is available in req.body after cloud upload
+    if (!req.body.resumeLink) {
+      return res.status(400).json({
+        success: false,
+        message: "No resume file uploaded to Cloudinary",
+      });
+    }
+    console.log(req.body.resumeLink);
+    
+    // Retrieve the user ID from the request object
+    const userId = req.user?._id;
+    
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: "User not authenticated",
+      });
+    }
+
+    // Update the user's profile with the new resume link
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      {
+        resumeLink: req.body.resumeLink,  // Add the resume link to the user's profile
+      },
+      { new: true }
+    ).select("-password"); // Exclude the password field in the response
+    console.log(updatedUser);
+    
+    if (!updatedUser) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    // Return success response with the updated user details
+    res.status(200).json({
+      success: true,
+      message: "Profile updated successfully",
+      user: updatedUser,
+    });
+  } catch (error) {
+    console.error("Error in uploadResume:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to process the resume upload",
       error: error.message,
     });
   }
@@ -469,6 +523,7 @@ export {
   registerUser,
   loginUser,
   updateUserProfile,
+  uploadResume,
   promoteUser,
   demoteUser,
   banUser,

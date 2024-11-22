@@ -120,8 +120,7 @@ const DriveSchema = new Schema(
           default: "Applied",
         },
       },
-    ],
-    
+    ],    
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User", // Assuming an Admin/User model exists

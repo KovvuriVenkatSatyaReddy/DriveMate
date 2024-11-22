@@ -1,5 +1,6 @@
 import axios from './axiosConfig';
 import { addDrive as addNewDrive, initialiseDrives } from '../store/driveSlice';
+import { toast } from 'react-toastify';
 const addDrive = async (drive,dispatch) => {
     try {
         const response = await axios.post('http://localhost:8000/api/v1/drives/add-drive',{drive},{withCredentials:true,});
@@ -32,9 +33,11 @@ const applyToDrive = async (dispatch, driveId) => {
         });
         console.log(response);
         // dispatch(updateAppliedDrives(response.data)); // Dispatch an action to update applied drives if needed
+        toast(response.data.message);
         return response.data;
     } catch (error) {
         console.error("There was an error applying to the drive", error);
+        toast(error.response.data.message);
         throw new Error(error.response?.data?.message || 'Applying to the drive failed');
     }
 }

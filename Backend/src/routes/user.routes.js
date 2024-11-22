@@ -1,8 +1,10 @@
 import { Router } from "express";
-import { registerUser, loginUser ,updateUserProfile ,logoutUser, changeCurrentPassword, generateAccessAndRefreshTokens, getCurrentUser, refreshAccessToken, getAllUsers, getUserDetails, promoteUser, demoteUser, banUser, unBanUser, getUserInfo } from "../controllers/user.controller.js";
+import { registerUser, loginUser ,updateUserProfile, uploadResume ,logoutUser, changeCurrentPassword, generateAccessAndRefreshTokens, getCurrentUser, refreshAccessToken, getAllUsers, getUserDetails, promoteUser, demoteUser, banUser, unBanUser, getUserInfo } from "../controllers/user.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
 import authenticateUser, { verifyToken } from "../middlewares/authenticate.middleware.js";
 import isAdmin from "../middlewares/isAdmin.middleware.js"
+import { uploadToCloudinary } from "../utils/cloudinary.js";
+
 const router = Router();
 
 router.route('/register').post(
@@ -20,6 +22,13 @@ router.route('/logout').post(
 router.route('/update').post(
     authenticateUser,
     updateUserProfile
+);
+
+router.route('/upload-resume').post(
+    authenticateUser, 
+    upload.single('resume'),
+    uploadToCloudinary,
+    uploadResume
 );
 
 router.route('/promote').post(
@@ -63,5 +72,6 @@ router.route('/user-info').get(
 router.route('/refresh').post(
     refreshAccessToken
 )
+
 
 export default router

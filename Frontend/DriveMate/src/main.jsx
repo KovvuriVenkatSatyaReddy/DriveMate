@@ -14,6 +14,8 @@ import Notifications from './components/Notifications/Notifications.jsx';
 import UsersList from './components/UsersList/UsersList.jsx';
 import DriveDetails from './components/Dashboard/DriveDetails.jsx';
 import UserDetails from './components/UsersList/UserDetails.jsx';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const router = createBrowserRouter([
   {
@@ -75,6 +77,19 @@ root.render(
   <React.StrictMode>
     <Provider store={store}>
       <RouterProvider router={router} />
+      <ToastContainer
+        position="bottom-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+        transition: Bounce
+      />
     </Provider>
   </React.StrictMode>
 );

@@ -4,7 +4,9 @@ import { User } from "../models/user.model.js";
 const authenticateUser = async (req, res, next) => {
   const token = req.cookies.accessToken;
   // console.log(.....token);
-  
+  // console.log(req);
+
+
   if (!token) {
     return res.status(401).json({ message: "Authentication token is missing" });
   }
